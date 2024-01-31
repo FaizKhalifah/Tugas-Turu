@@ -1,5 +1,3 @@
-import express from "express";
-import { promises as fsPromises } from 'fs';
 import process from "process";
 import readlinePromises from "readline/promises";
 import { MongoClient } from 'mongodb';
@@ -9,26 +7,55 @@ const input = readlinePromises.createInterface({
     output:process.stdout
 })
 
-const client = new MongoClient('mongodb://localhost:27017/Latihan1');
+async function main(){
+    console.log("Selamat datang di aplikasi Tugas-Turu");
+    console.log("========================================")
+    let username = await input.question("Silahkan masukkan usernamemu : ");
+    let password = await input.question("Masukkan password akunmu : ");
+    let hasilLogin = await login(username,password);
+    if(hasilLogin===false){
+        console.log("Kamu masih belum memiliki akun");
+        let jawaban = await input.question("Apakah kamu ingin membuat akun baru (ya/tidak)? ");
+        if(jawaban.toLocaleLowerCase=="iya"){
+            let usernameBaru = await input.question("Masukkan username yang ingin kamu gunakan : ");
+            let passwordBaru = await input.question("Masukkan password yang ingin kamu gunakan : ");
+        }else{
+            console.log("Keluar dari program");
+            process.exit(1);
+        }
+    }else{
+        console.log(`Selamat datang ${username}, silahkan menggunakan aplikasi ini`);
+    }
+}
 
-let mahasiswa;
-let kumpulanMahasiswa;
+const client = new MongoClient('mongodb://localhost:27017/TugasTuru');
+
+
+
 
 async function fetchData(){
     await client.connect();
-    console.log('Terhubung ke database');
-
     const db = client.db();
-    mahasiswa = db.collection('mahasiswa');
-    kumpulanMahasiswa = await mahasiswa.find().toArray();
-    return kumpulanMahasiswa;
+    let mahasiswa = db.collection('User');
+    return mahasiswa;
 }
 
-const app = express();
 
-app.listen(3000,()=>{
-    console.log("Server menyala");
-})
+async function showData(){
+    const dataMahasiswa = await fetchData();
+    const listMahasiswa = await dataMahasiswa.find().toArray();
+    return listMahasiswa;
+}
 
-let dataMahasiswa = await fetchData();
-console.log(dataMahasiswa);
+async function login(username,password){
+    const dataMahasiswa = await fetchData();
+    const tampungan = await dataMahasiswa.findOne({nama:username,password:password});
+    if(tampungan==null){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+
+main();
