@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "aplikasi manajemen tugas yang sangat sederhana",
   "main": "index.js",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "FaizKhalifah",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0"
   }
 }

@@ -8,5 +8,14 @@ const input = readlinePromises.createInterface({
     output:process.stdout
 })
 
-let testing = await input.question("Testing : ");
-console.log(testing);
+const app = express();
+app.listen(3000,()=>{
+    console.log("Server menyala");
+});
+
+app.get('/mahasiswa',(req,res)=>{
+    res.json({
+        pesan:"Selamat datang di API"
+    })
+})
+
