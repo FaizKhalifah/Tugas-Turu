@@ -16,9 +16,11 @@ async function main(){
     if(hasilLogin===false){
         console.log("Kamu masih belum memiliki akun");
         let jawaban = await input.question("Apakah kamu ingin membuat akun baru (ya/tidak)? ");
-        if(jawaban.toLocaleLowerCase=="iya"){
+        if(jawaban.toLowerCase()=="ya"){
             let usernameBaru = await input.question("Masukkan username yang ingin kamu gunakan : ");
             let passwordBaru = await input.question("Masukkan password yang ingin kamu gunakan : ");
+            let status = await addUser(usernameBaru,passwordBaru);
+            console.log(status);
         }else{
             console.log("Keluar dari program");
             process.exit(1);
@@ -29,9 +31,6 @@ async function main(){
 }
 
 const client = new MongoClient('mongodb://localhost:27017/TugasTuru');
-
-
-
 
 async function fetchData(){
     await client.connect();
@@ -57,5 +56,15 @@ async function login(username,password){
     }
 }
 
+async function addUser(username,password){
+    const dataMahasiswa = await fetchData();
+    await dataMahasiswa.insertOne({
+        "nama" : username,
+        "password" : password,
+        "tugas":[],
+        "poin":0
+    })
+    return "Selamat, akun anda telah ditambahkan";
+}
 
 main();
