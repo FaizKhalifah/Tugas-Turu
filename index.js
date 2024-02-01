@@ -142,7 +142,6 @@ async function deleteTask(username,password,namaTugas,matkul){
         const updatePoin = await dataMahasiswa.updateOne(akunMahasiswa,{$inc:{poin:10}});
         return "Tugas telah selesai dan kamu mendapat poin";
     }
-  
 }
 
 main();
