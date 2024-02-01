@@ -44,6 +44,15 @@ async function main(){
                     let matkul = await input.question("Masukkan mata kuliah dari tugas : ");
                     let statusTambah = await addTask(username,password,namaTugas,matkul);
                     console.log(statusTambah);
+                }else if(Number(perintah)==2){
+                    let namaTugas = await input.question("Masukkan nama tugas : ");
+                    let matkul = await input.question("Masukkan mata kuliah dari tugas : ");
+                    let statusHapus = await deleteTask(username,password,namaTugas,matkul);
+                    console.log(statusHapus);
+                }else if(Number(perintah)==3){
+                    console.log("Berikut adalah daftar tugasmu : ");
+                    let daftarTugas = await listTaks(username,password);
+                    console.log(daftarTugas);
                 }else if(Number(perintah)==4){
                     console.log("Keluar dari layanan");
                     break;
@@ -111,6 +120,30 @@ async function check(username,password){
     }else{
         return true;
     }
+}
+
+async function listTaks(username,password){
+    const dataMahasiswa = await fetchData();
+    const tampungan = await dataMahasiswa.findOne({nama:username,password:password},{tugas:1});
+    const arrayTugas = tampungan.tugas;
+    return arrayTugas;
+
+}
+
+async function deleteTask(username,password,namaTugas,matkul){
+    const dataMahasiswa = await fetchData();
+    const tampungan = await dataMahasiswa.findOne({nama:username,password:password},{tugas:1});
+    const arrayTugas = tampungan.tugas;
+    let index = 0;
+    for(let i in arrayTugas){
+        if(arrayTugas[i].namaTugas==namaTugas && arrayTugas[i].matkul==matkul){
+            index=i;
+            break
+        }
+    }
+    arrayTugas.splice(index,1);
+    tampungan.poin+=10;
+    return "Tugas telah selesai dan kamu mendapat poin";
 }
 
 main();
