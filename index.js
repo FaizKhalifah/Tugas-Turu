@@ -132,18 +132,17 @@ async function listTaks(username,password){
 
 async function deleteTask(username,password,namaTugas,matkul){
     const dataMahasiswa = await fetchData();
-    const tampungan = await dataMahasiswa.findOne({nama:username,password:password},{tugas:1});
-    const arrayTugas = tampungan.tugas;
-    let index = 0;
-    for(let i in arrayTugas){
-        if(arrayTugas[i].namaTugas==namaTugas && arrayTugas[i].matkul==matkul){
-            index=i;
-            break
-        }
+    // const tampungan = await dataMahasiswa.findOne({nama:username,password:password},{tugas:1});
+    const akunMahasiswa = {nama:username,password:password};
+    const perintahUpdate = {$pull: { tugas: { namaTugas: namaTugas,matkul:matkul } }};
+    const updateTugas = await dataMahasiswa.updateOne(akunMahasiswa, perintahUpdate);
+    if(updateTugas.modifiedCount==0){
+        return 'Tugas tidak ditemukan';
+    }else{
+        const updatePoin = await dataMahasiswa.updateOne(akunMahasiswa,{$inc:{poin:10}});
+        return "Tugas telah selesai dan kamu mendapat poin";
     }
-    arrayTugas.splice(index,1);
-    tampungan.poin+=10;
-    return "Tugas telah selesai dan kamu mendapat poin";
+  
 }
 
 main();
